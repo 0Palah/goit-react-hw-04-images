@@ -19,6 +19,7 @@ const App = () => {
 
   useEffect(() => {
     getFetchedImg();
+    // eslint-disable-next-line
   }, [searchQuarry]);
 
   const handleSubmit = evt => {
