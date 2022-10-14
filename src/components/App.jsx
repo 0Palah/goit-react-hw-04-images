@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import css from './App.module.css';
 import getFetchApi from './services/fetchApi';
 import Searchbar from './Searchbar/Searchbar';
@@ -7,78 +7,62 @@ import Button from './Button/Button';
 import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
 
-export class App extends Component {
-  state = {
-    images: [],
-    searchQuarry: '',
-    page: 1,
-    isLoading: false,
-    showModal: false,
-    error: null,
-    modalImageURL: '',
-    totalHits: null,
-  };
+const App = () => {
+  const [images, setImages] = useState([]);
+  const [searchQuarry, setSearchQuarry] = useState('');
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(null);
+  const [modalImageURL, setModalImageURL] = useState('');
+  const [totalHits, setTotalHits] = useState(null);
 
-  componentDidUpdate(_, prevState) {
-    if (this.state.searchQuarry !== prevState.searchQuarry) {
-      this.getFetchedImg();
-    }
-  }
+  useEffect(() => {
+    getFetchedImg();
+  }, [searchQuarry]);
 
-  handleSubmit = evt => {
+  const handleSubmit = evt => {
     evt.preventDefault();
-    this.setState({ images: [] });
+    setImages([]);
     const { value } = evt.target.serchInput;
-    this.setState({ searchQuarry: value, page: 1 });
+    setSearchQuarry(value);
+    setPage(1);
   };
 
-  getFetchedImg = async () => {
-    this.setState({ isLoading: true });
+  const getFetchedImg = async () => {
+    setIsLoading(true);
     try {
-      const { page, searchQuarry } = this.state;
       const response = await getFetchApi({
         page: page,
         searchQuarry: searchQuarry,
       });
-
-      this.setState(prevState => ({
-        images: [...prevState.images, ...response.hits],
-        page: prevState.page + 1,
-        totalHits: response.totalHits,
-      }));
+      setImages(prev => [...prev, ...response.hits]);
+      setPage(prev => prev + 1);
+      setTotalHits(response.totalHits);
     } catch (err) {
-      this.setState({ error: err });
+      setError(err);
+      console.log(error);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
 
-  handleToggleModal = largeImageURL => {
-    this.setState(({ showModal }) => ({
-      modalImageURL: largeImageURL,
-      showModal: !showModal,
-    }));
+  const handleToggleModal = largeImageURL => {
+    setModalImageURL(largeImageURL);
+    setShowModal(prev => !prev);
   };
 
-  render() {
-    const { images, showModal, modalImageURL, totalHits, isLoading } =
-      this.state;
+  return (
+    <div className={css.App}>
+      <Searchbar onSubmit={handleSubmit} />
+      <ImageGallery images={images} onClick={handleToggleModal}></ImageGallery>
+      {images.length < totalHits && <Button onClick={getFetchedImg}></Button>}
+      {isLoading && <Loader />}
+      {showModal && (
+        <Modal imgUrl={modalImageURL} toggleModal={handleToggleModal} />
+      )}
+    </div>
+  );
+};
 
-    return (
-      <div className={css.App}>
-        <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery
-          images={images}
-          onClick={this.handleToggleModal}
-        ></ImageGallery>
-        {images.length < totalHits && (
-          <Button onClick={this.getFetchedImg}></Button>
-        )}
-        {isLoading && <Loader />}
-        {showModal && (
-          <Modal imgUrl={modalImageURL} toggleModal={this.handleToggleModal} />
-        )}
-      </div>
-    );
-  }
-}
+export default App;
