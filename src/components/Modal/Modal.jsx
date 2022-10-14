@@ -7,6 +7,7 @@ const Modal = ({ imgUrl, toggleModal }) => {
     window.addEventListener('keydown', handlePressEsc);
 
     return () => window.removeEventListener('keydown', handlePressEsc);
+    // eslint-disable-next-line
   }, []);
 
   const handlePressEsc = evt => {
