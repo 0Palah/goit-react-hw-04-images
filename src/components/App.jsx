@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import css from './App.module.css';
 import getFetchApi from './services/fetchApi';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
+import css from './App.module.css';
 
 const App = () => {
   const [images, setImages] = useState([]);

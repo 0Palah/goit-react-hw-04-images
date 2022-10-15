@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import css from './Modal.module.css';
 
 const Modal = ({ imgUrl, toggleModal }) => {

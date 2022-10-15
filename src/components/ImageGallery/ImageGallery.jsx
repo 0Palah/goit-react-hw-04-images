@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import css from './ImageGallery.module.css';
 
 const ImageGallery = ({ images, onClick }) => {
   return (
